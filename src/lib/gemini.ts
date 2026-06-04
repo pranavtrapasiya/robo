@@ -80,9 +80,9 @@ export async function generateKikiResponseGemini(
     .join("\n");
 
   // Construct chat history context for Gemini API
-  // Using gemini-1.5-flash as it supports JSON Schema and Audio input
+  // Using gemini-flash-latest as it supports JSON Schema and Audio input
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-flash-latest",
     generationConfig: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -212,7 +212,7 @@ export async function transcribeAudio(audioBuffer: Buffer, mimeType: string): Pr
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
   const result = await model.generateContent([
     {
