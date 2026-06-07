@@ -31,8 +31,32 @@ export async function POST(request: Request) {
       return validation.errorResponse;
     }
 
-    const { text, voice, speed } = validation.data!;
-    const languageCode = voice || process.env.TTS_LANGUAGE || "en-us";
+        const { text, voice, speed } = validation.data!;
+    
+    // Map frontend OpenAI voice names to valid Google Translate language codes
+    const voiceMap: Record<string, string> = {
+      alloy: "en-us",
+      echo: "en-gb",
+      fable: "en-au",
+      onyx: "en-in",
+      nova: "en-us",
+      shimmer: "en-gb",
+    };
+
+    let languageCode = "en-us";
+    if (voice) {
+      const vLower = voice.toLowerCase();
+      if (voiceMap[vLower]) {
+        languageCode = voiceMap[vLower];
+      } else if (/^[a-z]{2}(-[a-z]{2,4})?$/i.test(vLower)) {
+        languageCode = vLower;
+      } else {
+        languageCode = process.env.TTS_LANGUAGE || "en-us";
+      }
+    } else {
+      languageCode = process.env.TTS_LANGUAGE || "en-us";
+    }
+
     const ttsSpeed = speed !== undefined ? String(speed) : process.env.TTS_SPEED || "1";
 
     // Ensure public/audio directory exists
