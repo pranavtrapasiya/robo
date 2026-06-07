@@ -9,6 +9,8 @@ import path from "path";
 interface RobotMessageRequest {
   robotId: string;
   message: string;
+  voice?: string;
+  speed?: number | string;
 }
 
 const TINY_SILENT_MP3_BASE64 = 
@@ -32,7 +34,9 @@ export async function POST(request: Request) {
       return validation.errorResponse;
     }
 
-    const { message } = validation.data!;
+    const { message, voice, speed } = validation.data!;
+    const languageCode = voice || process.env.TTS_LANGUAGE || "en-us";
+    const ttsSpeed = speed !== undefined ? String(speed) : process.env.TTS_SPEED || "1";
     
     const user = await getCurrentUser();
     if (!user) {
@@ -81,8 +85,8 @@ export async function POST(request: Request) {
     let audioFileName = "mock.mp3";
 
     try {
-      // Use free high-quality Google Translate TTS API
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(kikiResult.reply)}&tl=en&client=tw-ob`;
+      // Use free high-quality Google Translate TTS API with dynamic parameters
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(kikiResult.reply)}&tl=${encodeURIComponent(languageCode)}&client=tw-ob&ttsspeed=${encodeURIComponent(ttsSpeed)}`;
       const ttsResponse = await fetch(ttsUrl, {
         headers: {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"

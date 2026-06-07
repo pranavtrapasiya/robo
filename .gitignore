@@ -45,3 +45,6 @@ next-env.d.ts
 # SQLite database files
 *.db
 *.db-journal
+
+# Dynamically generated TTS audio files
+/public/audio/tts-*.mp3

@@ -6,6 +6,7 @@ import path from "path";
 interface TtsRequestBody {
   text: string;
   voice?: string;
+  speed?: number | string;
 }
 
 // A base64 representation of a tiny valid 1-second silent MP3
@@ -30,7 +31,9 @@ export async function POST(request: Request) {
       return validation.errorResponse;
     }
 
-    const { text } = validation.data!;
+    const { text, voice, speed } = validation.data!;
+    const languageCode = voice || process.env.TTS_LANGUAGE || "en-us";
+    const ttsSpeed = speed !== undefined ? String(speed) : process.env.TTS_SPEED || "1";
 
     // Ensure public/audio directory exists
     const audioDir = path.join(process.cwd(), "public", "audio");
@@ -42,8 +45,8 @@ export async function POST(request: Request) {
     const protocol = request.headers.get("x-forwarded-proto") || "http";
 
     try {
-      // Use free high-quality Google TTS translation stream
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
+      // Use free high-quality Google TTS translation stream with dynamic parameters
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${encodeURIComponent(languageCode)}&client=tw-ob&ttsspeed=${encodeURIComponent(ttsSpeed)}`;
       const ttsResponse = await fetch(ttsUrl, {
         headers: {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
