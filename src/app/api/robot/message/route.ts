@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 
 interface RobotMessageRequest {
   robotId: string;

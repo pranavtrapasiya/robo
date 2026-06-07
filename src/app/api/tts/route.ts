@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { checkSecurity, validateRequestBody, handleError } from "@/lib/security";
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 
 interface TtsRequestBody {
   text: string;

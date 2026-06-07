@@ -255,6 +255,11 @@ export default function DashboardPage() {
         },
         body: JSON.stringify({ text: cleanText, voice: voiceToUse }),
       });
+
+      if (!res.ok) {
+        throw new Error(`TTS API returned status ${res.status}`);
+      }
+
       const data = await res.json();
       setIsTtsMock(!!data.isMock);
 
